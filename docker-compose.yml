@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  sql:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    environment:
+      ACCEPT_EULA: "Y" # Changed to standard Azure SQL Edge variable
+      SA_PASSWORD: "Password@1" # Changed to correct password variable for SQL Edge
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql # Recommended for data persistence
+
+volumes:
+  sql_data: # Declare the volume for data persistence
