@@ -1,30 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using API.RequestHelper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController(IGenericRepository<Product> repository) : Controller
+
+    public class ProductsController(IGenericRepository<Product> repository) : BaseApiController
     {
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? brands, string? types, string? sort)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
+            [FromQuery] ProductSpecParams productSpecParams)
         {
-            var spec = new ProductSpecification(brands, types, sort);
-            var products = await repository.ListAsync(spec);
+            var spec = new ProductSpecification(productSpecParams);
 
-            return Ok(products);
+            return await CreatePagesResult(repository, spec, productSpecParams.PageIndex, productSpecParams.PageSize);
         }
 
         [HttpGet("{id:int}")]
