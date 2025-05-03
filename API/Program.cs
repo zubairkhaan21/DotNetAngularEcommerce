@@ -5,7 +5,6 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -15,15 +14,14 @@ builder.Services.AddDbContext<StoreContext>(options =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleWare>();
-app.UseCors(opt =>
-{
-    opt.AllowAnyHeader().AllowAnyMethod()
-    .WithOrigins("http://localhost:42000", "https://localhost:42000");
-});
+app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod()
+    .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 app.MapControllers();
 
 try
